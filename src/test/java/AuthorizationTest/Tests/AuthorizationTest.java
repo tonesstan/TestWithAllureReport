@@ -33,7 +33,7 @@ public class AuthorizationTest {
     public static void setUp() {
         Configuration.baseUrl = "https://auth.rbc.ru";
         Configuration.browser = "firefox";
-        Configuration.browserCapabilities = new FirefoxOptions().setPageLoadStrategy(PageLoadStrategy.EAGER).addArguments("-headless", "--window-size=1920,1080", "--disable-notifications", "--disable-gpu", "--disable-dev-tools", "--fastSetValue");
+        Configuration.browserCapabilities = new FirefoxOptions().setPageLoadStrategy(PageLoadStrategy.EAGER).addArguments("--headless", "--window-size=1920,1080", "--disable-notifications", "--disable-gpu", "--disable-dev-tools", "--fastSetValue");
         Configuration.timeout = 2000;
     }
 
@@ -74,8 +74,8 @@ public class AuthorizationTest {
         };
 
         description(description);
-        String errorEvent = (valid) ? "Authorization failure with correct credentials" : "Successful authorization with invalid credentials";
-        String errorEventRu = (valid) ? "Неудачная авторизация с верными данными" : "Успешная авторизация с неправильными данными";
+        String errorEvent = (valid) ? "authorization failure with correct credentials" : "successful authorization with invalid credentials";
+        String errorEventRu = (valid) ? "неудачная авторизация с верными данными" : "успешная авторизация с неправильными данными";
         step("Когда пользователь нажимает кнопку 'Вход'", RegisterPage::clickLoginButton);
         step("И вводит " + emailValidity + " email", () -> {
             System.out.println("Enter email: " + email);
@@ -147,7 +147,7 @@ public class AuthorizationTest {
 //        assertEquals(TempMailPage.getEmail(), forgotPasswordEmail, "\nError: temporary e-mail has been deleted by the mail service.\nTest failed.\n");
         step("И ожидает письмо со ссылкой на смену пароля", () -> {
             try {TempMailPage.waitForMessage();} catch (Exception e) {
-                addAttachment("Ошибка: письмо не пришло.\nТест провален.", "Ошибка: письмо не пришло.\nТест провален.");
+                addAttachment("Ошибка: письмо не пришло в течение 10 минут.\nТест провален.", "Ошибка: письмо не пришло.\nТест провален.");
                 fail("\nError: password change message hasn't received for 10 minutes.\nTest failed.\n");
             }
             try {assertEquals("auth@rbc.ru", TempMailPage.getSendersEmail(), "Error: trash message.\nTest failed.");}
@@ -166,7 +166,7 @@ public class AuthorizationTest {
         step("Когда пользователь вводит новый пароль", () -> {
             System.out.println("Enter new password: " + pass);
             ChangePasswordPage.enterPassword(pass);
-            addAttachment("Ввели пароль: " + pass, "Ввели новый пароль: " + pass);
+            addAttachment("Ввели пароль: " + pass, "Ввели пароль: " + pass);
         });
         step("И повторяет его ввод в поле подтверждения пароля", () -> ChangePasswordPage.enterConfirmPassword(pass));
         step("И нажимает кнопку 'Сохранить новый пароль'", ChangePasswordPage::clickChangePasswordButton);
@@ -174,7 +174,7 @@ public class AuthorizationTest {
             MainPage.waitForPageLoad();
             try {assertTrue(MainPage.authorizationCheck(), "\nError: password change failed.\nTest failed.\n");}
             catch (AssertionFailedError e) {
-                addAttachment("Ошибка: смена пароля не удалась. \nТест провален.", "Ошибка: смена пароля не удалась. \nТест провален.");
+                addAttachment("Ошибка: установка нового пароля не удалась. \nТест провален.", "Ошибка: установка нового пароля не удалась. \nТест провален.");
                 throw e;
             }
         });
