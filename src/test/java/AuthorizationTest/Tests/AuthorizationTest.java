@@ -94,7 +94,10 @@ public class AuthorizationTest {
         step ("Тогда он " + no + " попадает на главную страницу", () -> {
             MainPage.waitForPageLoad();
             try {assertEquals(MainPage.authorizationCheck(), valid, "\nError: " + errorEvent + ".\nTest failed.\n");}
-            catch (AssertionFailedError e) {addAttachment("Ошибка:" + errorEventRu + ".\nТест провален.", "Ошибка:" + errorEventRu + ".\nТест провален.");}
+            catch (AssertionFailedError e) {
+                addAttachment("Ошибка:" + errorEventRu + ".\nТест провален.", "Ошибка:" + errorEventRu + ".\nТест провален.");
+                throw e;
+            }
         });
     }
 
@@ -123,7 +126,11 @@ public class AuthorizationTest {
         step("И нажимает кнопку 'Восстановить'", ForgotPasswordPage::clickRestoreButton);
         step("Тогда он видит сообщение 'Смена пароля'", () -> {
             ForgotPasswordPage.waitForRequestConfirmation();
-            assertTrue(ForgotPasswordPage.requestCheck(), "\nError: password change request hasn't been confirmed.\nTest failed.\n");
+            try {assertTrue(ForgotPasswordPage.requestCheck(), "\nError: password change request hasn't been confirmed.\nTest failed.\n");}
+            catch (AssertionFailedError e) {
+                addAttachment("Ошибка: не удалось отправить запрос на смену пароля.\nТест провален.", "Ошибка: не удалось отправить запрос на смену пароля.\nТест провален.");
+                throw e;
+            }
         });
         step("Когда пользователь переходит на сайт своей электронной почты", () -> {
             open("https://mail.tm");
@@ -140,11 +147,14 @@ public class AuthorizationTest {
 //        assertEquals(TempMailPage.getEmail(), forgotPasswordEmail, "\nError: temporary e-mail has been deleted by the mail service.\nTest failed.\n");
         step("И ожидает письмо со ссылкой на смену пароля", () -> {
             try {TempMailPage.waitForMessage();} catch (Exception e) {
+                addAttachment("Ошибка: письмо не пришло.\nТест провален.", "Ошибка: письмо не пришло.\nТест провален.");
                 fail("\nError: password change message hasn't received for 10 minutes.\nTest failed.\n");
-                addAttachment("Ошибка: письмо не получено в течение 10 минут. \nТест провален.", "Ошибка: письмо не получено в течение 10 минут. \nТест провален.");
             }
             try {assertEquals("auth@rbc.ru", TempMailPage.getSendersEmail(), "Error: trash message.\nTest failed.");}
-            catch (AssertionFailedError e) {addAttachment("Ошибка: пришло мусорное сообщение.\nТест провален.", "Ошибка: пришло мусорное сообщение.\nТест провален.");}
+            catch (AssertionFailedError e) {
+                addAttachment("Ошибка: пришло мусорное сообщение.\nТест провален.", "Ошибка: пришло мусорное сообщение.\nТест провален.");
+                throw e;
+            }
         });
         step("И, получив письмо, открывает его", () -> {
             TempMailPage.clickMessage();
@@ -163,7 +173,10 @@ public class AuthorizationTest {
         step("Тогда он попадает на главную страницу", () -> {
             MainPage.waitForPageLoad();
             try {assertTrue(MainPage.authorizationCheck(), "\nError: password change failed.\nTest failed.\n");}
-            catch (AssertionFailedError e) {addAttachment("Ошибка: смена пароля не удалась. \nТест провален.", "Ошибка: смена пароля не удалась. \nТест провален.");}
+            catch (AssertionFailedError e) {
+                addAttachment("Ошибка: смена пароля не удалась. \nТест провален.", "Ошибка: смена пароля не удалась. \nТест провален.");
+                throw e;
+            }
         });
     }
 
